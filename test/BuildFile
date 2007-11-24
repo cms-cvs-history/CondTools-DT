@@ -9,9 +9,6 @@
 <use name=FWCore/Framework>	
 <use name=CondFormats/DataRecord>
 <use name=DataFormats/MuonDetId>
-<bin file=testWriteDTRef.cpp></bin>
-<bin file=testReadDTRef.cpp></bin>
-<bin file=testCopyDTRef.cpp></bin>
 <library file=stubs/DTConfigDump.cc name=DTConfigDump>
         <flags EDM_PLUGIN=1>
 </library>
