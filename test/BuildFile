@@ -1,0 +1,17 @@
+<use name=clhep>
+<use name=FWCore/ParameterSet>
+<use name=CondFormats/DTObjects>
+<use name=CondTools/DT>
+<use name=CondCore/DBCommon>
+<use name=CondCore/DBOutputService>
+<use name=CondCore/IOVService>
+<use name=CondCore/MetaDataService>
+<use name=FWCore/Framework>	
+<use name=CondFormats/DataRecord>
+<use name=DataFormats/MuonDetId>
+<bin file=testWriteDTRef.cpp></bin>
+<bin file=testReadDTRef.cpp></bin>
+<bin file=testCopyDTRef.cpp></bin>
+<library file=stubs/DTConfigDump.cc name=DTConfigDump>
+        <flags EDM_PLUGIN=1>
+</library>

@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding="UTF-8"?>
+<!DOCTYPE Mapping SYSTEM "InMemory">
+<Mapping version="DTCCBConfig-1.0" >
+  <Class table="DTCCBCONFIG" id_columns="IOV_VALUE_ID" name="DTCCBConfig" >
+    <Primitive column="TIME" name="timeStamp" />
+    <Primitive column="DATA_VERSION" name="dataVersion" />
+    <Primitive column="CONFKEY" name="fullConfigKey" />
+    <Container table="DT_CFGCHAMBER" id_columns="IOV_VALUE_ID" name="ccbData" position_column="DATA_ID" >
+      <Object table="DT_CFGCHAMBER" id_columns="DATA_ID IOV_VALUE_ID" name="key_type" >
+        <Primitive column="WHEEL"   name="wheelId" />
+        <Primitive column="STATION" name="stationId" />
+        <Primitive column="SECTOR"  name="sectorId" />
+      </Object >
+      <Container table="DT_CFGBRICK" id_columns="DATA_ID IOV_VALUE_ID" name="mapped_type" position_column="ELEMENT_ID" >
+        <Primitive column="CONFIG_ID" name="value_type" />
+      </Container >
+    </Container >
+  </Class >
+</Mapping >
