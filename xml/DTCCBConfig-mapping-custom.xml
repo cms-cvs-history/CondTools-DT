@@ -5,15 +5,15 @@
     <Primitive column="TIME" name="timeStamp" />
     <Primitive column="DATA_VERSION" name="dataVersion" />
     <Primitive column="CONFKEY" name="fullConfigKey" />
-    <Container table="DT_CFGCHAMBER" id_columns="IOV_VALUE_ID" name="ccbData" position_column="DATA_ID" >
-      <Object table="DT_CFGCHAMBER" id_columns="DATA_ID IOV_VALUE_ID" name="key_type" >
-        <Primitive column="WHEEL"   name="wheelId" />
-        <Primitive column="STATION" name="stationId" />
-        <Primitive column="SECTOR"  name="sectorId" />
+    <Container table="DT_CFGCHAMBER" id_columns="IOV_VALUE_ID" name="dataList" position_column="POS" >
+      <Object table="DT_CFGCHAMBER" id_columns="DATA_ID IOV_VALUE_ID" name="value_type" >
+        <Object table="DT_CFGCHAMBER" id_columns="DATA_ID IOV_VALUE_ID" name="first" >
+          <Primitive column="WHEEL"   name="wheelId" />
+          <Primitive column="STATION" name="stationId" />
+          <Primitive column="SECTOR"  name="sectorId" />
+        </Object >
+        <Primitive column="CONFIG_ID" name="second" />
       </Object >
-      <Container table="DT_CFGBRICK" id_columns="DATA_ID IOV_VALUE_ID" name="mapped_type" position_column="ELEMENT_ID" >
-        <Primitive column="CONFIG_ID" name="value_type" />
-      </Container >
     </Container >
   </Class >
 </Mapping >
