@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007-11-07 15:48:54 $
- *  $Revision: 1.1 $
+ *  $Date: 2007/11/24 12:29:53 $
+ *  $Revision: 1.1.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -16,6 +16,7 @@
 // Collaborating Class Headers --
 //-------------------------------
 #include "CondTools/DT/interface/DTPerformanceHandler.h"
+#include "FWCore/Framework/interface/MakerMacros.h"
 
 //---------------
 // C++ Headers --
@@ -46,15 +47,13 @@ DTPerformanceAnalyzer::~DTPerformanceAnalyzer() {
 // Operations --
 //--------------
 void DTPerformanceAnalyzer::initSource( const edm::Event& evt,
-                                  const edm::EventSetup& est ) {
+                                        const edm::EventSetup& est ) {
   m_handler_object = new DTPerformanceHandler( "DTPerformance",
-                                         m_offline_connection,
-                                         m_catalog, evt, est,
-                                         dataTag,
-                                         fileName );
+                                               m_offline_connection,
+                                               evt, est,
+                                               dataTag, fileName );
   return;
 }
 
-  
 DEFINE_FWK_MODULE(DTPerformanceAnalyzer);
 

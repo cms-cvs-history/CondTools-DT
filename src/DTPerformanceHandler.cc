@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007-11-07 15:08:40 $
- *  $Revision: 1.1 $
+ *  $Date: 2007/11/24 12:29:55 $
+ *  $Revision: 1.1.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -33,12 +33,11 @@
 //----------------
 DTPerformanceHandler::DTPerformanceHandler( std::string name,
                                             std::string connect_string,
-                                            std::string catalog,
                                             const edm::Event& evt,
                                             const edm::EventSetup& est,
                                             const std::string& tag,
                                             const std::string& file ):
- popcon::PopConSourceHandler<DTPerformance>( name, connect_string, catalog,
+ popcon::PopConSourceHandler<DTPerformance>( name, connect_string,
                                              evt, est ),
  dataTag( tag ),
  fileName( file ) {

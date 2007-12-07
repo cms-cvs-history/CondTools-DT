@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007/06/20 17:54:55 $
- *  $Revision: 1.1.2.1 $
+ *  $Date: 2007/11/24 12:29:54 $
+ *  $Revision: 1.1.4.2 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -24,17 +24,19 @@
 #include "FWCore/Catalog/interface/SiteLocalConfig.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CondCore/MetaDataService/interface/MetaData.h"
-#include "CondCore/DBCommon/interface/PoolStorageManager.h"
-#include "CondCore/DBCommon/interface/RelationalStorageManager.h"
+#include "CondCore/DBCommon/interface/Connection.h"
+#include "CondCore/DBCommon/interface/PoolTransaction.h"
+//#include "CondCore/DBCommon/interface/PoolStorageManager.h"
+//#include "CondCore/DBCommon/interface/RelationalStorageManager.h"
 #include "CondCore/IOVService/interface/IOVService.h"
 #include "CondCore/IOVService/interface/IOVEditor.h"
 #include "CondCore/IOVService/interface/IOVNames.h"
 #include "CondCore/DBCommon/interface/AuthenticationMethod.h"
-#include "CondCore/DBCommon/interface/ConnectMode.h"
+//#include "CondCore/DBCommon/interface/ConnectMode.h"
 #include "CondCore/DBCommon/interface/MessageLevel.h"
 #include "CondCore/DBCommon/interface/Exception.h"
 #include "CondCore/DBCommon/interface/ConfigSessionFromParameterSet.h"
-#include "CondCore/DBCommon/src/ServiceLoader.h"
+//#include "CondCore/DBCommon/src/ServiceLoader.h"
 #include "CondCore/DBOutputService/interface/Exception.h"
 #include "CondCore/DBCommon/interface/ObjectRelationalMappingUtility.h"
 #include "CondCore/DBOutputService/src/serviceCallbackToken.h"
@@ -69,57 +71,38 @@ DTDBSession::DTDBSession( const std::string& dbFile,
 
    std::string connect( dbFile );
    std::string catconnect( dbCatalog );
-   int connectionTimeOut = 600;
-   int connectionRetrialPeriod = 30;
-   int connectionRetrialTimeOut = 180;
-   m_session = new cond::DBSession( true );
+//   int connectionTimeOut = 600;
+//   int connectionRetrialPeriod = 30;
+//   int connectionRetrialTimeOut = 180;
+   m_session = new cond::DBSession();
    if ( auth_path.empty() ) {
-     m_session->sessionConfiguration().setAuthenticationMethod( cond::Env );
+     m_session->configuration().setAuthenticationMethod( cond::Env );
    }
    else {
-     m_session->sessionConfiguration().setAuthenticationMethod( cond::XML );
-     m_session->sessionConfiguration().setAuthenticationPath( auth_path );
+     m_session->configuration().setAuthenticationMethod( cond::XML );
+     m_session->configuration().setAuthenticationPath( auth_path );
    }
-   m_session->sessionConfiguration().setMessageLevel( cond::Error );
-   m_session->connectionConfiguration().enableConnectionSharing();
-   m_session->connectionConfiguration().setConnectionTimeOut(
+   m_session->configuration().setMessageLevel( cond::Error );
+/*
+   m_session->configuration().connectionConfiguration()->enableConnectionSharing();
+   m_session->configuration().connectionConfiguration()->setConnectionTimeOut(
                                            connectionTimeOut );
-   m_session->connectionConfiguration().
+   m_session->configuration().connectionConfiguration()->
               enableReadOnlySessionOnUpdateConnections();
-   m_session->connectionConfiguration().setConnectionRetrialPeriod(
-                                           connectionRetrialPeriod);
-   m_session->connectionConfiguration().setConnectionRetrialTimeOut(
-                                           connectionRetrialTimeOut );
-
+   m_session->configuration().connectionConfiguration()->
+              setConnectionRetrialPeriod( connectionRetrialPeriod );
+   m_session->configuration().connectionConfiguration()->
+              setConnectionRetrialTimeOut( connectionRetrialTimeOut );
+*/
    m_session->open();
    if ( siteLocalConfig ) {
     edm::Service<edm::SiteLocalConfig> localconfservice;
     if( !localconfservice.isAvailable() ){
       throw cms::Exception("edm::SiteLocalConfigService is not available");
     }
-/*
-    connect=localconfservice->lookupCalibConnect(connect);
-//    catconnect=iConfig.getUntrackedParameter<std::string>("catalog","");
-    if(catconnect.empty()){
-//      std::string tmpcatalog;
-      catconnect=localconfservice->calibCatalog();
-//      catconnect = tmpcatalog;
-//    }else{
-//      tmpcatalog=catconnect;
-    }
-    std::string logicalconnect=localconfservice->calibLogicalServer();
-*/
-
-/*
-    //get handle to IConnectionService
-    seal::IHandle<coral::IConnectionService>
-      connSvc = m_session->serviceLoader().context()->query<coral::IConnectionService>( "CORAL/Services/ConnectionService" );
-    //get handle to webCacheControl()
-    connSvc->webCacheControl().refreshTable( logicalconnect,cond::IOVNames::iovTableName() );
-    connSvc->webCacheControl().refreshTable( logicalconnect,cond::IOVNames::iovDataTableName() );
-*/
    }
-   m_pooldb = new cond::PoolStorageManager( connect, catconnect, m_session );
+   m_connection = new cond::Connection( connect, -1 );
+//   m_pooldb = new cond::PoolStorageManager( connect, catconnect, m_session );
 
 }
 
@@ -127,6 +110,7 @@ DTDBSession::DTDBSession( const std::string& dbFile,
 // Destructor --
 //--------------
 DTDBSession::~DTDBSession() {
+  delete m_connection;
   delete m_session;
 }
 
@@ -134,15 +118,19 @@ DTDBSession::~DTDBSession() {
 // Operations --
 //--------------
 /// get storage manager
-cond::PoolStorageManager* DTDBSession::poolDB() const {
+cond::PoolTransaction* DTDBSession::poolDB() const {
+//cond::PoolStorageManager* DTDBSession::poolDB() const {
   return m_pooldb;
 }
 
 
 /// start transaction
 void DTDBSession::connect( bool readOnly ) {
-  m_pooldb->connect();
-  m_pooldb->startTransaction( readOnly );
+  m_connection->connect( m_session );
+  m_pooldb = &( m_connection->poolTransaction() );
+  m_pooldb->start( readOnly );
+//  m_pooldb->connect();
+//  m_pooldb->startTransaction( readOnly );
   return;
 }
 
@@ -150,6 +138,8 @@ void DTDBSession::connect( bool readOnly ) {
 /// end   transaction
 void DTDBSession::disconnect() {
   m_pooldb->commit();
-  m_pooldb->disconnect();	
+  m_connection->disconnect();
+//  m_pooldb->commit();
+//  m_pooldb->disconnect();	
   return;
 }

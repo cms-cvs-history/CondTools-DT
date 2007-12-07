@@ -5,8 +5,8 @@
  *  Description: 
  *
  *
- *  $Date: 2007-11-07 15:08:40 $
- *  $Revision: 1.1 $
+ *  $Date: 2007/11/24 12:29:51 $
+ *  $Revision: 1.1.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -37,12 +37,11 @@ class DTDeadFlagHandler: public popcon::PopConSourceHandler<DTDeadFlag> {
   /** Constructor
    */
   DTDeadFlagHandler( std::string name,
-                  std::string connect_string,
-                  std::string catalog,
-                  const edm::Event& evt,
-                  const edm::EventSetup& est,
-                  const std::string& tag,
-                  const std::string& file );
+                     std::string connect_string,
+                     const edm::Event& evt,
+                     const edm::EventSetup& est,
+                     const std::string& tag,
+                     const std::string& file );
   void getNewObjects();
 
   /** Destructor
@@ -62,9 +61,4 @@ class DTDeadFlagHandler: public popcon::PopConSourceHandler<DTDeadFlag> {
 
 
 #endif // DTDeadFlagHandler_H
-
-
-
-
-
 

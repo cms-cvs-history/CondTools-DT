@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007-11-07 15:48:54 $
- *  $Revision: 1.1 $
+ *  $Date: 2007/11/24 12:29:53 $
+ *  $Revision: 1.1.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -16,6 +16,7 @@
 // Collaborating Class Headers --
 //-------------------------------
 #include "CondTools/DT/interface/DTMtimeHandler.h"
+#include "FWCore/Framework/interface/MakerMacros.h"
 
 //---------------
 // C++ Headers --
@@ -49,12 +50,10 @@ void DTMtimeAnalyzer::initSource( const edm::Event& evt,
                                   const edm::EventSetup& est ) {
   m_handler_object = new DTMtimeHandler( "DTMtime",
                                          m_offline_connection,
-                                         m_catalog, evt, est,
-                                         dataTag,
-                                         fileName );
+                                         evt, est,
+                                         dataTag, fileName );
   return;
 }
 
-  
 DEFINE_FWK_MODULE(DTMtimeAnalyzer);
 

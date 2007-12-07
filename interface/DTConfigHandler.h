@@ -5,8 +5,8 @@
  *  Description:
  *       Class to hold configuration identifier for chambers
  *
- *  $Date: 2007/09/20 16:25:35 $
- *  $Revision: 1.1.2.2 $
+ *  $Date: 2007/11/24 12:29:51 $
+ *  $Revision: 1.1.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -21,7 +21,7 @@
 //------------------------------------
 #include "CondFormats/DTObjects/interface/DTConfigList.h"
 #include "CondFormats/DTObjects/interface/DTConfigData.h"
-#include "CondCore/DBCommon/interface/Ref.h"
+#include "CondCore/DBCommon/interface/TypedRef.h"
 class DTDBSession;
 
 //---------------
@@ -54,8 +54,8 @@ class DTConfigHandler {
 
   int set( int cfgId, const std::string& token );
   /// Access methods to data
-  typedef std::map<int,
-                   cond::Ref<DTConfigData>*>::const_iterator const_iterator;
+  typedef std::map< int, cond::TypedRef<DTConfigData>* >::const_iterator
+                                                          const_iterator;
   const_iterator begin() const;
   const_iterator end() const;
 
@@ -93,8 +93,8 @@ class DTConfigHandler {
 
   DTDBSession* dbSession;
   std::string objToken;
-  cond::Ref<DTConfigList>* refSet;
-  std::map<int,cond::Ref<DTConfigData>*> refMap;
+  cond::TypedRef<DTConfigList>* refSet;
+  std::map<int,cond::TypedRef<DTConfigData>*> refMap;
   int cachedBrickNumber;
   int cachedStringNumber;
   int cachedByteNumber;

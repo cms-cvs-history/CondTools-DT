@@ -5,8 +5,8 @@
  *  Description: 
  *
  *
- *  $Date: 2007-11-07 15:48:54 $
- *  $Revision: 1.1 $
+ *  $Date: 2007/11/24 12:29:53 $
+ *  $Revision: 1.1.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -53,7 +53,6 @@ class DTDeadFlagAnalyzer: public popcon::PopConAnalyzer<DTDeadFlag> {
   std::string fileName;
 
 };
-
 
 #endif // DTDeadFlagAnalyzer_H
 

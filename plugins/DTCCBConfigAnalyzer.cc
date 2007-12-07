@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007-08-20 15:48:54 $
- *  $Revision: 1.1 $
+ *  $Date: 2007/11/24 12:29:52 $
+ *  $Revision: 1.1.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -16,6 +16,7 @@
 // Collaborating Class Headers --
 //-------------------------------
 #include "CondTools/DT/interface/DTCCBConfigHandler.h"
+#include "FWCore/Framework/interface/MakerMacros.h"
 
 //---------------
 // C++ Headers --
@@ -39,6 +40,7 @@ DTCCBConfigAnalyzer::DTCCBConfigAnalyzer( const edm::ParameterSet& ps ):
  offlineAuthentication( ps.getParameter<edm::ParameterSet>( "DBParameters" )
                           .getUntrackedParameter<std::string> (
                         "authenticationPath" ) ),
+// catalog(               ps.getParameter<std::string> ( "catalog" ) ),
  listToken(             ps.getParameter<std::string> ( "token" ) ) {
 //  edm::ParameterSet pdb( ps.getParameter<edm::ParameterSet>(
 //                         "DBParameters" ) );
@@ -64,7 +66,7 @@ void DTCCBConfigAnalyzer::initSource( const edm::Event& evt,
                                       const edm::EventSetup& est ) {
   m_handler_object = new DTCCBConfigHandler( "DTCCBConfig",
                                              m_offline_connection,
-                                             m_catalog, evt, est,
+                                             evt, est,
                                              dataTag,
                                              onlineConnect,
                                              onlineAuthentication,
@@ -72,7 +74,6 @@ void DTCCBConfigAnalyzer::initSource( const edm::Event& evt,
                                              listToken );
   return;
 }
-
 
 DEFINE_FWK_MODULE(DTCCBConfigAnalyzer);
 

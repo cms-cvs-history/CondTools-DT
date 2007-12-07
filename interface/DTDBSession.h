@@ -5,8 +5,8 @@
  *  Description: 
  *
  *
- *  $Date: 2007/06/22 14:02:17 $
- *  $Revision: 1.1.2.1 $
+ *  $Date: 2007/11/24 12:29:51 $
+ *  $Revision: 1.1.4.2 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -23,18 +23,23 @@
 #include "CondCore/DBCommon/interface/DBSession.h"
 #include "CondCore/IOVService/interface/IOVService.h"
 #include "CondCore/DBCommon/interface/AuthenticationMethod.h"
-#include "CondCore/DBCommon/interface/PoolStorageManager.h"
-#include "CondCore/DBCommon/interface/RelationalStorageManager.h"
-#include "CondCore/DBCommon/interface/Ref.h"
+#include "CondCore/DBCommon/interface/Connection.h"
+//#include "CondCore/DBCommon/interface/PoolStorageManager.h"
+//#include "CondCore/DBCommon/interface/RelationalStorageManager.h"
+#include "CondCore/DBCommon/interface/TypedRef.h"
 #include "CondCore/DBCommon/interface/Time.h"
 #include "CondCore/MetaDataService/interface/MetaData.h"
 #include "CondCore/DBOutputService/interface/serviceCallbackRecord.h"
 #include <string>
 #include <map>
-namespace edm{
+namespace edm {
   class Event;
   class EventSetup;
   class ParameterSet;
+}
+namespace cond{
+  class PoolTransaction;
+  class Connection;
 }
 
 //---------------
@@ -64,7 +69,8 @@ class DTDBSession {
   /** Operations
    */
   /// get storage manager
-  cond::PoolStorageManager* poolDB() const;
+  cond::PoolTransaction* poolDB() const;
+//  cond::PoolStorageManager* poolDB() const;
 
   /// start transaction
   void connect( bool readOnly );
@@ -74,7 +80,9 @@ class DTDBSession {
  private:
 
   cond::DBSession* m_session;
-  cond::PoolStorageManager* m_pooldb;
+  cond::Connection* m_connection;
+  cond::PoolTransaction* m_pooldb;
+//  cond::PoolStorageManager* m_pooldb;
 
 };
 

@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007-08-20 15:48:54 $
- *  $Revision: 1.1 $
+ *  $Date: 2007/11/24 12:29:53 $
+ *  $Revision: 1.1.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -57,7 +57,7 @@ void DTConfigDBInit::beginJob( edm::EventSetup const& c ) {
   int dummyId = -999999999;
   DTConfigData* dummyConf = new DTConfigData();
   dummyConf->setId( dummyId );
-  cond::Ref<DTConfigData> confRef( *session->poolDB(), dummyConf );
+  cond::TypedRef<DTConfigData> confRef( *session->poolDB(), dummyConf );
   confRef.markWrite( "DTConfigData" );
 
   DTConfigList* confList = new DTConfigList( name );
@@ -65,7 +65,7 @@ void DTConfigDBInit::beginJob( edm::EventSetup const& c ) {
   token.id  = 0;
   token.ref = confRef.token();
   confList->set( dummyId, token );
-  cond::Ref<DTConfigList> setRef( *session->poolDB(), confList );
+  cond::TypedRef<DTConfigList> setRef( *session->poolDB(), confList );
   setRef.markWrite( "DTConfigList" );
   std::string listToken = setRef.token();
   std::cout << "configuration list stored with token: " << std::endl 

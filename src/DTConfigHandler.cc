@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007/09/20 16:25:36 $
- *  $Revision: 1.1.2.2 $
+ *  $Date: 2007/11/24 12:29:54 $
+ *  $Revision: 1.1.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -105,7 +105,8 @@ void DTConfigHandler::remove( const DTConfigHandler* handler ) {
 /// get content
 const DTConfigList* DTConfigHandler::getContainer() {
   if ( refSet == 0 )
-       refSet = new cond::Ref<DTConfigList>( *dbSession->poolDB(), objToken );
+       refSet = new cond::TypedRef<DTConfigList>( *dbSession->poolDB(),
+                                                  objToken );
   return refSet->ptr();
 }
 
@@ -133,11 +134,11 @@ int DTConfigHandler::get( int cfgId, DTConfigData*& obj ) {
         if ( ( cachedBrickNumber  > maxBrickNumber  ) ||
              ( cachedStringNumber > maxStringNumber ) ||
              ( cachedByteNumber   > maxByteNumber   ) ) purge(); //autoPurge();
-        cond::Ref<DTConfigData>* refObj =
-              new cond::Ref<DTConfigData>( *dbSession->poolDB(),
-                                           actualToken );
-        refMap.insert( std::pair<int,cond::Ref<DTConfigData>*>( cfgId,
-                                                                refObj ) );
+        cond::TypedRef<DTConfigData>* refObj =
+              new cond::TypedRef<DTConfigData>( *dbSession->poolDB(),
+                                                actualToken );
+        refMap.insert( std::pair<int,cond::TypedRef<DTConfigData>*>(
+                       cfgId, refObj ) );
         obj = refObj->ptr();
         DTConfigData::data_iterator d_iter = obj->dataBegin();
         DTConfigData::data_iterator d_iend = obj->dataEnd();
@@ -246,11 +247,11 @@ std::string DTConfigHandler::clone( DTDBSession* newSession,
       refSet->ptr()->get( -999999999, chkToken );
       actualToken = compToken( chkToken.ref, actualId );
     }
-    cond::Ref<DTConfigData> sRef( *dbSession->poolDB(),
-                                  actualToken );
+    cond::TypedRef<DTConfigData> sRef( *dbSession->poolDB(),
+                                       actualToken );
     std::cout << " copying brick " << sRef->getId() << std::endl;
     DTConfigData* ptr = new DTConfigData( *( sRef.ptr() ) );
-    cond::Ref<DTConfigData> dRef( *newSession->poolDB(), ptr );
+    cond::TypedRef<DTConfigData> dRef( *newSession->poolDB(), ptr );
     dRef.markWrite( refContainer );
     DTConfigToken objToken;
     std::string tokenRef( dRef.token() );
@@ -259,7 +260,7 @@ std::string DTConfigHandler::clone( DTDBSession* newSession,
     rn->set( iter->first, objToken );
     iter++;
   }
-  cond::Ref<DTConfigList> setRef( *newSession->poolDB(), rn );
+  cond::TypedRef<DTConfigList> setRef( *newSession->poolDB(), rn );
   setRef.markWrite( objContainer );
   std::string token = setRef.token();
   return token;
@@ -276,8 +277,8 @@ std::string DTConfigHandler::clone( DTDBSession* newSession,
 
   const DTConfigList* rs = getContainer();
   std::cout << "look for existing list reference..." << std::endl;
-  cond::Ref<DTConfigList>* setRef = new cond::Ref<DTConfigList>(
-                                    *newSession->poolDB(), newToken );
+  cond::TypedRef<DTConfigList>* setRef = new cond::TypedRef<DTConfigList>(
+                                         *newSession->poolDB(), newToken );
   std::cout << "look for existing list pointer..." << std::endl;
   DTConfigList* rn = 0;
   try {
@@ -302,15 +303,15 @@ std::string DTConfigHandler::clone( DTDBSession* newSession,
       refSet->ptr()->get( -999999999, chkToken );
       actualToken = compToken( chkToken.ref, actualId );
     }
-    cond::Ref<DTConfigData> sRef( *dbSession->poolDB(),
-                                  actualToken );
+    cond::TypedRef<DTConfigData> sRef( *dbSession->poolDB(),
+                                       actualToken );
     int cfgId = sRef->getId();
     std::cout << " checking brick " << cfgId << std::endl;
     DTConfigToken dumToken;
     if ( rn->get( cfgId, dumToken ) ) {
       std::cout << " ... copying brick " << cfgId << std::endl;
       DTConfigData* ptr = new DTConfigData( *( sRef.ptr() ) );
-      cond::Ref<DTConfigData> dRef( *newSession->poolDB(), ptr );
+      cond::TypedRef<DTConfigData> dRef( *newSession->poolDB(), ptr );
       dRef.markWrite( refContainer );
       DTConfigToken objToken;
       std::string tokenRef( dRef.token() );
@@ -322,7 +323,7 @@ std::string DTConfigHandler::clone( DTDBSession* newSession,
   }
   std::string token( "" );
   if ( containerMissing ) {
-    setRef = new cond::Ref<DTConfigList>( *newSession->poolDB(), rn );
+    setRef = new cond::TypedRef<DTConfigList>( *newSession->poolDB(), rn );
     setRef->markWrite( objContainer );
     token = setRef->token();
   }

@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007-08-17 15:08:40 $
- *  $Revision: 1.1 $
+ *  $Date: 2007/11/24 12:29:54 $
+ *  $Revision: 1.1.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -22,8 +22,12 @@
 #include "CondFormats/DTObjects/interface/DTConfigList.h"
 #include "CondCore/DBCommon/interface/AuthenticationMethod.h"
 #include "CondCore/DBCommon/interface/Exception.h"
-#include "CondCore/DBCommon/interface/RelationalStorageManager.h"
 #include "CondCore/DBCommon/interface/DBSession.h"
+#include "CondCore/DBCommon/interface/Connection.h"
+#include "CondCore/DBCommon/interface/CoralTransaction.h"
+#include "CondCore/DBCommon/interface/SessionConfiguration.h"
+#include "CondCore/DBCommon/interface/ConnectionConfiguration.h"
+//#include "CondCore/DBCommon/interface/RelationalStorageManager.h"
 #include "RelationalAccess/AccessMode.h"
 #include "RelationalAccess/IRelationalService.h"
 #include "RelationalAccess/RelationalServiceException.h"
@@ -60,7 +64,6 @@
 //----------------
 DTCCBConfigHandler::DTCCBConfigHandler( std::string name,
                                         std::string connect_string,
-                                        std::string catalog,
                                         const edm::Event& evt,
                                         const edm::EventSetup& est,
                                         const std::string& tag,
@@ -68,14 +71,14 @@ DTCCBConfigHandler::DTCCBConfigHandler( std::string name,
                                         const std::string& onlineAuthPath,
                                         const std::string& offlineAuthPath,
                                         const std::string& token ):
- popcon::PopConSourceHandler<DTCCBConfig>( name, connect_string, catalog,
+ popcon::PopConSourceHandler<DTCCBConfig>( name, connect_string,
                                            evt, est ),
  dataTag( tag ),
  onlineConnect( onlineDB ),
  onlineAuthentication( onlineAuthPath ),
  offlineAuthentication( offlineAuthPath ),
  offlineConnect( connect_string ),
- offlineCatalog( catalog ),
+ offlineCatalog( " " ),
  listToken( token ) {
 }
 
@@ -91,27 +94,38 @@ DTCCBConfigHandler::~DTCCBConfigHandler() {
 void DTCCBConfigHandler::getNewObjects() {
 
   cond::DBSession* coralSession;
-  cond::RelationalStorageManager* m_coraldb;
+  cond::Connection* m_connection;
+  cond::CoralTransaction* m_coraldb;
 
   coralSession = new cond::DBSession();
   // to get the username/passwd from $CORAL_AUTH_PATH/authentication.xml
-  coralSession->sessionConfiguration().setAuthenticationMethod( cond::XML );
-  coralSession->sessionConfiguration().setAuthenticationPath( 
-                                       onlineAuthentication );
+  coralSession->configuration().setAuthenticationMethod( cond::XML );
+  coralSession->configuration().setAuthenticationPath( onlineAuthentication );
   // set message level to Error or Debug
-  coralSession->sessionConfiguration().setMessageLevel( cond::Error );
-  coralSession->connectionConfiguration().setConnectionRetrialTimeOut( 60 );
+  coralSession->configuration().setMessageLevel( cond::Error );
+//  coralSession->connectionConfiguration().setConnectionRetrialTimeOut( 60 );
   coralSession->open();
 
-  m_coraldb = new cond::RelationalStorageManager( onlineConnect,
-                                                  coralSession );
-  isession =
-  m_coraldb->connect( cond::ReadOnly );
-  m_coraldb->startTransaction( true );
+  m_connection = new cond::Connection( onlineConnect );
+  m_connection->connect( coralSession );
+  m_coraldb = &( m_connection->coralTransaction() );
+  m_coraldb->start( true );
+
+  std::cout << "get session proxy... " << std::endl;
+  isession = &( m_coraldb->coralSessionProxy() );
+  std::cout << "session proxy got" << std::endl;
+  m_coraldb->start( true );
+//  m_coraldb = new cond::RelationalStorageManager( onlineConnect,
+//                                                  coralSession );
+//  isession =
+//  m_coraldb->connect( cond::ReadOnly );
+//  m_coraldb->startTransaction( true );
 
   chkConfigList();
+  std::cout << "get run config..." << std::endl;
 
   std::map<std::string, popcon::PayloadIOV> mp = getOfflineInfo();
+  std::cout << "tag map got..." << std::endl;
   std::map<std::string, popcon::PayloadIOV>::iterator iter = mp.begin();
   std::map<std::string, popcon::PayloadIOV>::iterator iend = mp.end();
   while ( iter != iend ) {
@@ -121,6 +135,7 @@ void DTCCBConfigHandler::getNewObjects() {
               << std::endl;
     iter++;
   }
+  std::cout << "loop over tags done..." << std::endl;
 
   coral::AttributeList emptyBindVariableList;
 
@@ -131,11 +146,15 @@ void DTCCBConfigHandler::getNewObjects() {
   else                    std::cout << "tag " << dataTag
                                     << " not found" << std::endl;
 
+  std::cout << "last run found..." << std::endl;
+
     std::cout << "LAST RUN: " << lastRun << std::endl;
     std::map<int,int> cfgMap;
 
+    std::cout << "get table handle... " << std::endl;
     coral::ITable& runConfigTable =
       isession->nominalSchema().tableHandle( "TBRUN" );
+    std::cout << "table handle got " << std::endl;
     std::auto_ptr<coral::IQuery>
       runConfigQuery( runConfigTable.newQuery() );
     runConfigQuery->addToOutputList( "RUN" );
@@ -229,6 +248,7 @@ void DTCCBConfigHandler::getNewObjects() {
       m_to_transfer->push_back( std::make_pair( fullConf, iop ) );
     }
 
+  delete m_connection;
   delete coralSession;
 
   return;
@@ -240,6 +260,7 @@ void DTCCBConfigHandler::chkConfigList() {
             << offlineConnect << " , "
             << offlineCatalog << " , "
             << offlineAuthentication << std::endl;
+
   DTDBSession* session = new DTDBSession( offlineConnect, offlineCatalog,
                                           offlineAuthentication );
   session->connect( false );
@@ -295,6 +316,7 @@ void DTCCBConfigHandler::chkConfigList() {
     if ( brickData == 0 ) {
       std::cout << "brick missing, copy request" << std::endl;
       missingList.push_back( brickConfigId );
+      break; // REMOVE
     }
   }
   std::vector<int>::const_iterator brickIter = missingList.begin();
@@ -333,15 +355,19 @@ void DTCCBConfigHandler::chkConfigList() {
                   << std::endl;
         brickData->add( row["CONFIGCMDS.CONFDATA"].data<std::string>() );
       }
-      cond::Ref<DTConfigData> brickRef( *session->poolDB(), brickData );
+      cond::TypedRef<DTConfigData> brickRef( *session->poolDB(), brickData );
       brickRef.markWrite( "DTConfigData" );
       ri->set( brickConfigId, brickRef.token() );
   }
 
+  std::cout << "disconnect session..." << std::endl;
   session->disconnect();
+  std::cout << "delete session..." << std::endl;
   delete session;
+  std::cout << "list updated..." << std::endl;
 
   return;
+
 }
 
 
