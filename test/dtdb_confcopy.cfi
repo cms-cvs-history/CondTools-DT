@@ -1,0 +1,10 @@
+block DTDBConfCopy = {
+    string sourceContact = "protocol://db/schema"
+    string sourceCatalog = ""
+    string sourceToken = ""
+    string sourceAuthPath = "."
+    string targetContact = "protocol://db/schema"
+    string targetCatalog = ""
+    string targetToken = ""
+    string targetAuthPath = "."
+}
