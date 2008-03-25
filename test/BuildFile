@@ -12,3 +12,6 @@
 <library file=stubs/DTConfigDump.cc name=DTConfigDump>
         <flags EDM_PLUGIN=1>
 </library>
+<library file=validate/*.cc name=CondToolsDTValidate>
+        <flags EDM_PLUGIN=1>
+</library>
