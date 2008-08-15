@@ -26,6 +26,8 @@ namespace edmtest {
     local     = p.getParameter< bool        >("siteLocalConfig");
     if ( local ) catalog = "";
     else         catalog = p.getParameter< std::string >("catalog");
+    dumpCCBKeys = p.getParameter< bool        >("dumpCCBKeys");
+    dumpAllData = p.getParameter< bool        >("dumpAllData");
 
 // create DB session
     session = new DTDBSession( connect, catalog, auth_path, local );
@@ -64,7 +66,14 @@ namespace edmtest {
     std::cout << conf->version() << std::endl;
     std::cout << std::distance( conf->begin(), conf->end() )
               << " data in the container" << std::endl;
+    edm::ValidityInterval iov(
+         context.get<DTCCBConfigRcd>().validityInterval() );
+    unsigned int currValidityStart = iov.first().eventID().run();
+    unsigned int currValidityEnd   = iov.last( ).eventID().run();
+    std::cout << "valid since run " << currValidityStart
+              << " to run "         << currValidityEnd << std::endl;
 
+    if( !dumpCCBKeys ) return;
 // loop over chambers
     DTCCBConfig::ccb_config_map configKeys( conf->configKeyMap() );
     DTCCBConfig::ccb_config_iterator iter = configKeys.begin();
@@ -89,6 +98,7 @@ namespace edmtest {
         int id = *cfgIter++;
         std::cout << " " << id;
         std::cout << std::endl;
+	if( !dumpAllData ) continue;
 // create strings list
         std::vector<const std::string*> list;
         ri->getData( id, list );

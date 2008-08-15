@@ -31,7 +31,9 @@ process.conf = cms.EDFilter("DTConfigDump",
     token = cms.string('[DB=000000000-0000-0000-0000-000000000000][CNT=DTConfigList][CLID=9CB14BE8-30A2-DB11-9935-000E0C5CE283][TECH=00000B01][OID=00000004-00000000]'),
     authenticationPath = cms.string('.'),
     connect = cms.string('oracle://cms_orcon_prod/CMS_COND_21X_DT'),
-    siteLocalConfig = cms.bool(True)
+    siteLocalConfig = cms.bool(True),
+    dumpCCBKeys = cms.bool(False),
+    dumpAllData = cms.bool(False)
 )
 
 process.p = cms.Path(process.conf)

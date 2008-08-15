@@ -31,6 +31,8 @@ namespace edmtest {
     std::string catalog;
     std::string token;
     bool local;
+    bool dumpCCBKeys;
+    bool dumpAllData;
     DTDBSession* session;
     const DTConfigList* rs;
     DTConfigHandler* ri;
