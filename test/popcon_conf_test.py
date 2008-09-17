@@ -29,7 +29,7 @@ process.conf_o2o = cms.EDAnalyzer("DTCCBConfigPopConAnalyzer",
             messageLevel = cms.untracked.int32(0),
             authenticationPath = cms.untracked.string('.')
         ),
-        onlineDB = cms.string('oracle://cms_omds_lb/CMS_DT_ELEC_CONF'),
+        onlineDB = cms.string('sqlite_file:dummy_online.db'),
 
         offlineDB = cms.string('sqlite_file:testconf.db'),
         tag = cms.string('conf_test'),
