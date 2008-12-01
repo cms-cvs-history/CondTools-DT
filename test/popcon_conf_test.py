@@ -16,10 +16,10 @@ process.PoolDBOutputService = cms.Service("PoolDBOutputService",
 )
 
 process.source = cms.Source("EmptyIOVSource",
-    lastRun = cms.untracked.uint32(1),
-    timetype = cms.string('runnumber'),
-    firstRun = cms.untracked.uint32(1),
-    interval = cms.uint32(1)
+    timetype   = cms.string('runnumber'),
+    firstValue = cms.uint64(1),
+    lastValue  = cms.uint64(1),
+    interval   = cms.uint64(1)
 )
 
 process.conf_o2o = cms.EDAnalyzer("DTCCBConfigPopConAnalyzer",
