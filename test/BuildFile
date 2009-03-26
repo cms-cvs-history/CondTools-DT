@@ -7,9 +7,11 @@
 <use name=CondCore/IOVService>
 <use name=CondCore/MetaDataService>
 <use name=FWCore/Framework>	
+<use name=Geometry/DTGeometry>
+<use name=Geometry/Records>
 <use name=CondFormats/DataRecord>
 <use name=DataFormats/MuonDetId>
-<library file=stubs/DTConfigDump.cc name=DTConfigDump>
+<library file=stubs/*.cc name=CondToolsDTTest>
         <flags EDM_PLUGIN=1>
 </library>
 <library file=validate/*.cc name=CondToolsDTValidate>
