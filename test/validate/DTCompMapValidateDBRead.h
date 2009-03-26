@@ -11,18 +11,20 @@ Toy EDAnalyzer for testing purposes only.
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-#include <string>
+class DTCompMapValidateDBRead : public edm::EDAnalyzer {
 
-namespace edmtest {
-  class DTCompactMapDump : public edm::EDAnalyzer
-  {
-  public:
-    explicit  DTCompactMapDump(edm::ParameterSet const& p);
-    explicit  DTCompactMapDump(int i) ;
-    virtual ~ DTCompactMapDump();
-    virtual void analyze(const edm::Event& e, const edm::EventSetup& c);
-    virtual void endJob();
-  private:
-    std::string fileName;
-  };
-}
+ public:
+
+  explicit  DTCompMapValidateDBRead(edm::ParameterSet const& p);
+  explicit  DTCompMapValidateDBRead(int i) ;
+  virtual ~ DTCompMapValidateDBRead();
+  virtual void analyze(const edm::Event& e, const edm::EventSetup& c);
+  virtual void endJob();
+
+ private:
+
+  std::string dataFileName;
+  std::string elogFileName;
+
+};
+
