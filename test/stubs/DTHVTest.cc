@@ -70,7 +70,6 @@ namespace edmtest {
                 << hvData.flagS  << std::endl;
     }
     std::cout << "============" << std::endl;
-    DTHVHandler hh( hv.product() );
     int whe;
     int sta;
     int sec;
@@ -83,7 +82,7 @@ namespace edmtest {
     std::ifstream fcel( "cellList.txt" );
     while ( fcel >> whe >> sta >> sec >> qua >> lay >> cel ) {
       DTWireId id( whe, sta, sec, qua, lay, cel );
-      hh.get( id, flagA, flagC, flagS );
+      hv->get( id, flagA, flagC, flagS );
       std::cout << whe   << " "
                 << sta   << " "
                 << sec   << " "
@@ -103,12 +102,12 @@ namespace edmtest {
                 << whe << " "
                 << sta << " "
                 << sec << " has "
-                << hh.offChannelsNumber( id )
+                << hv->offChannelsNumber( id )
                 << " bad cells" << std::endl;
     }
     std::cout << "============" << std::endl;
     std::cout << "total "
-              << hh.offChannelsNumber()
+              << hv->offChannelsNumber()
               << " bad cells" << std::endl;
 
   }
