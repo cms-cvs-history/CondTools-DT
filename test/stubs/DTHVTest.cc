@@ -16,7 +16,6 @@ Toy EDAnalyzer for testing purposes only.
 #include "CondTools/DT/test/stubs/DTHVTest.h"
 #include "CondFormats/DTObjects/interface/DTHVStatus.h"
 #include "CondFormats/DataRecord/interface/DTHVStatusRcd.h"
-#include "CondFormats/DTObjects/interface/DTHVHandler.h"
 #include "DataFormats/MuonDetId/interface/DTWireId.h"
 #include "DataFormats/MuonDetId/interface/DTChamberId.h"
 
