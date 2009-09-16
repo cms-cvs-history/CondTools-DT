@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2009/03/26 18:36:34 $
- *  $Revision: 1.1.2.2 $
+ *  $Date: 2009/09/03 14:09:01 $
+ *  $Revision: 1.1.4.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -1120,11 +1120,11 @@ int DTHVStatusHandler::checkCurrentStatus( int part, int type, float value ) {
   int status = 0;
   if ( type == 1 ) {
     if ( value < minHV[part] ) status += 1;
-    if ( value > maxHV[part] ) status += 1;
+    if ( value > maxHV[part] ) status += 2;
   }
   if ( type == 2 ) {
-    float maxCurrent = 3.0;
-    if ( value > maxCurrent ) status += 2;
+    float maxCurrent = 10.0;
+    if ( value > maxCurrent ) status += 4;
   }
   return status;
 }

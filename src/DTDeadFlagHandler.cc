@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007/12/07 15:13:22 $
- *  $Revision: 1.2 $
+ *  $Date: 2008/02/15 18:14:38 $
+ *  $Revision: 1.3 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -105,8 +105,8 @@ void DTDeadFlagHandler::getNewObjects() {
                 >> tp
                 >> ro
                 >> dc ) {
-    status = dFlag->setCellStatus( whe, sta, sec, qua, lay, cel,
-                                   hv != 0, tp != 0, ro != 0, dc != 0 );
+    status = dFlag->set( whe, sta, sec, qua, lay, cel,
+                         hv != 0, tp != 0, ro != 0, dc != 0 );
     std::cout << whe << " "
               << sta << " "
               << sec << " "
