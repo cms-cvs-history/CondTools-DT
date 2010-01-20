@@ -10,8 +10,8 @@ process.PoolDBOutputService = cms.Service("PoolDBOutputService",
     process.CondDBCommon,
     logconnect = cms.untracked.string('sqlite_file:log.db'),
     toPut = cms.VPSet(cms.PSet(
-        record = cms.string('DTTtrigRcd'),
-        tag = cms.string('tTrig_test')
+        record = cms.string('CLASSRcd'),
+        tag = cms.string('FNAME_test')
     ))
 )
 
@@ -22,13 +22,13 @@ process.source = cms.Source("EmptyIOVSource",
     interval   = cms.uint64(1)
 )
 
-process.tTrig = cms.EDAnalyzer("DTTtrigValidateDBWrite",
-    name = cms.untracked.string('DTTtrig'),
-    record = cms.string('DTTtrigRcd'),
+process.FNAME = cms.EDAnalyzer("VNAMEValidateDBWrite",
+    name = cms.untracked.string('CLASS'),
+    record = cms.string('CLASSRcd'),
     Source = cms.PSet(
-        version = cms.string('tTrig_test'),
-        outFile = cms.string('tTrigDump.txt'),
-        logFile = cms.string('tTrigValidate.log'),
+        version = cms.string('FNAME_test'),
+        outFile = cms.string('FNAMEDump.txt'),
+        logFile = cms.string('FNAMEValidate.log'),
         debug = cms.bool(False),
         firstRun = cms.uint32(1),
          lastRun = cms.uint32(5)
@@ -36,5 +36,5 @@ process.tTrig = cms.EDAnalyzer("DTTtrigValidateDBWrite",
     SinceAppendMode = cms.bool(True)
 )
 
-process.p = cms.Path(process.tTrig)
+process.p = cms.Path(process.FNAME)
 
