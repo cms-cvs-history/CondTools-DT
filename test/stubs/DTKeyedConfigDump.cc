@@ -11,50 +11,28 @@ Toy EDAnalyzer for testing purposes only.
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 
-
-#include "CondTools/DT/test/stubs/DTConfigDump.h"
+#include "CondTools/DT/test/stubs/DTKeyedConfigDump.h"
+#include "CondFormats/DTObjects/interface/DTConfigAbstractHandler.h"
 #include "CondFormats/DTObjects/interface/DTCCBConfig.h"
+#include "CondFormats/DTObjects/interface/DTKeyedConfig.h"
 #include "CondFormats/DataRecord/interface/DTCCBConfigRcd.h"
+#include "CondFormats/DataRecord/interface/DTKeyedConfigListRcd.h"
 
 namespace edmtest {
 
-  DTConfigDump::DTConfigDump(edm::ParameterSet const& p) {
-// parameters to setup 
-    connect   = p.getParameter< std::string >("connect");
-    auth_path = p.getParameter< std::string >("authenticationPath");
-    token     = p.getParameter< std::string >("token");
-    local     = p.getParameter< bool        >("siteLocalConfig");
-    if ( local ) catalog = "";
-    else         catalog = p.getParameter< std::string >("catalog");
+  DTKeyedConfigDump::DTKeyedConfigDump(edm::ParameterSet const& p) {
     dumpCCBKeys = p.getParameter< bool        >("dumpCCBKeys");
     dumpAllData = p.getParameter< bool        >("dumpAllData");
-
-// create DB session
-    session = new DTDBSession( connect, catalog, auth_path, local );
-//    session = new DTDBSession( connect, catalog, cond::XML, local );
-    session->connect( false );
-
-// create an interface to handle configurations list
-    DTConfigHandler::maxBrickNumber  = 100;
-    DTConfigHandler::maxStringNumber = 10000;
-    DTConfigHandler::maxByteNumber   = 1000000;
-    rs = 0;
-    ri = DTConfigHandler::create( session, token );
-//    ri = new DTConfigHandler( session, token );
-    rs = ri->getContainer();
   }
 
-  DTConfigDump::DTConfigDump(int i) {
+  DTKeyedConfigDump::DTKeyedConfigDump(int i) {
   }
 
-  DTConfigDump::~DTConfigDump() {
-    DTConfigHandler::remove( session );
-    session->disconnect();
-    delete session;
+  DTKeyedConfigDump::~DTKeyedConfigDump() {
   }
 
-  void DTConfigDump::analyze( const edm::Event& e,
-                              const edm::EventSetup& context ) {
+  void DTKeyedConfigDump::analyze( const edm::Event& e,
+                                   const edm::EventSetup& context ) {
     using namespace edm::eventsetup;
     // Context is not used.
     std::cout <<" I AM IN RUN NUMBER "<<e.id().run() <<std::endl;
@@ -74,12 +52,15 @@ namespace edmtest {
               << " to run "         << currValidityEnd << std::endl;
 
     if( !dumpCCBKeys ) return;
+
+    const DTKeyedConfig** allBricks = new const DTKeyedConfig*[100000];
+    int nBricks = 0;
+    DTConfigAbstractHandler* cfgCache = DTConfigAbstractHandler::getInstance();
+
 // loop over chambers
     DTCCBConfig::ccb_config_map configKeys( conf->configKeyMap() );
     DTCCBConfig::ccb_config_iterator iter = configKeys.begin();
     DTCCBConfig::ccb_config_iterator iend = configKeys.end();
-//    DTCCBConfig::const_iterator iter = conf->begin();
-//    DTCCBConfig::const_iterator iend = conf->end();
     while ( iter != iend ) {
 // get chamber id
       const DTCCBId& ccbId = iter->first;
@@ -99,20 +80,21 @@ namespace edmtest {
         std::cout << " " << id;
         std::cout << std::endl;
 	if( !dumpAllData ) continue;
-// create strings list
-        std::vector<const std::string*> list;
-        ri->getData( id, list );
-// loop over strings
-        std::vector<const std::string*>::const_iterator s_iter = list.begin();
-        std::vector<const std::string*>::const_iterator s_iend = list.end();
+        const DTKeyedConfig* kBrick = 0;
+//        cfgCache->get( context, id, kBrick );
+        cfgCache->get( context.get<DTKeyedConfigListRcd>(), id, kBrick );
+        allBricks[nBricks++] = kBrick;
+        std::vector<std::string>::const_iterator s_iter =
+                                                 kBrick->dataBegin();
+        std::vector<std::string>::const_iterator s_iend =
+                                                 kBrick->dataEnd();
         while ( s_iter != s_iend ) std::cout << "        ----> "
-                                             << **s_iter++ << std::endl;
+                                             << *s_iter++ << std::endl;
       }
       std::cout << std::endl;
       ++iter;
     }
-/*
-*/
+
   }
-  DEFINE_FWK_MODULE(DTConfigDump);
+  DEFINE_FWK_MODULE(DTKeyedConfigDump);
 }

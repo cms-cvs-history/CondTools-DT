@@ -9,10 +9,27 @@ process.CondDBCommon.DBParameters.authenticationPath = '.'
 process.PoolDBOutputService = cms.Service("PoolDBOutputService",
     process.CondDBCommon,
     logconnect = cms.untracked.string('sqlite_file:log.db'),
-    toPut = cms.VPSet(cms.PSet(
+    toPut = cms.VPSet(
+    cms.PSet(
         record = cms.string('DTCCBConfigRcd'),
-        tag = cms.string('conf_test')
-    ))
+        tag = cms.string('conf_test'),
+        timetype = cms.untracked.string('runnumber')
+    ),
+    cms.PSet(
+        record = cms.string('keyedConfBricks'),
+        tag = cms.string('keyedConfBricks_V01'),
+        timetype = cms.untracked.string('hash'),
+        withWrapper = cms.untracked.bool(True),
+        outOfOrder = cms.untracked.bool(True)
+    ),
+    cms.PSet(
+        record = cms.string('keyedConfListIOV'),
+        tag = cms.string('keyedConfListIOV_V01'),
+        timetype = cms.untracked.string('runnumber'),
+        withWrapper = cms.untracked.bool(True),
+        outOfOrder = cms.untracked.bool(False)
+    )
+    )
 )
 
 process.source = cms.Source("EmptyIOVSource",
@@ -22,7 +39,22 @@ process.source = cms.Source("EmptyIOVSource",
     interval   = cms.uint64(1)
 )
 
-process.conf_o2o = cms.EDAnalyzer("DTUserConfigPopConAnalyzer",
+process.essource = cms.ESSource("PoolDBESSource",
+    process.CondDBCommon,
+    DumpStat=cms.untracked.bool(True),
+    toGet = cms.VPSet(
+    cms.PSet(
+    record = cms.string('DTKeyedConfigListRcd'),
+    tag = cms.string('keyedConfListIOV_V01')
+    ),
+    cms.PSet(
+    record = cms.string('DTKeyedConfigContainerRcd'),
+    tag = cms.string('keyedConfBricks_V01')
+    )
+    )
+)
+
+process.conf_o2o = cms.EDAnalyzer("DTUserKeyedConfigPopConAnalyzer",
     name = cms.untracked.string('DTCCBConfig'),
     Source = cms.PSet(
         DBParameters = cms.PSet(
@@ -30,11 +62,9 @@ process.conf_o2o = cms.EDAnalyzer("DTUserConfigPopConAnalyzer",
             authenticationPath = cms.untracked.string('.')
         ),
         onlineDB = cms.string('sqlite_file:dummy_online.db'),
-
-        offlineDB = cms.string('sqlite_file:userconf.db'),
         tag = cms.string('conf_test'),
         run = cms.int32(1),
-        token = cms.string('[DB=00000000-0000-0000-0000-000000000000][CNT=DTConfigList][CLID=9CB14BE8-30A2-DB11-9935-000E0C5CE283][TECH=00000B01][OID=00000004-00000000]'),
+        container = cms.string('keyedConfBricks'),
         DTConfigKeys = cms.VPSet(
             cms.PSet(
                 configType = cms.untracked.int32(1),
