@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2010/07/21 16:06:53 $
- *  $Revision: 1.10 $
+ *  $Date: 2010/09/13 12:08:44 $
+ *  $Revision: 1.9.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -72,6 +72,8 @@ DTHVStatusHandler::DTHVStatusHandler( const edm::ParameterSet& ps ) :
  hUntil(                ps.getParameter<int> ( "untilHour"   ) ),
  pUntil(                ps.getParameter<int> ( "untilMinute" ) ),
  sUntil(                ps.getParameter<int> ( "untilSecond" ) ),
+ dumpAtStart(           ps.getParameter<bool>( "dumpAtStart" ) ),
+ dumpAtEnd(             ps.getParameter<bool>( "dumpAtEnd"   ) ),
  bwdTime(               ps.getParameter<long long int> ( "bwdTime" ) ),
  fwdTime(               ps.getParameter<long long int> ( "fwdTime" ) ),
  minTime(               ps.getParameter<long long int> ( "minTime" ) ),
@@ -722,9 +724,11 @@ void DTHVStatusHandler::updateHVStatus() {
     condSince = condUntil - dTime;
   }
 
-  dumpSnapshot( coralTime( procSince ) );
+  if ( dumpAtStart ) dumpSnapshot( coralTime( procSince ) );
 
   copyHVData();
+
+  if ( dumpAtEnd   ) dumpSnapshot( coralTime( procUntil ) );
 
   return;
 }
