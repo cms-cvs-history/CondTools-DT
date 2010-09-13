@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2010/09/13 12:08:44 $
- *  $Revision: 1.9.2.1 $
+ *  $Date: 2010/09/13 14:20:12 $
+ *  $Revision: 1.9.2.2 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -728,7 +728,7 @@ void DTHVStatusHandler::updateHVStatus() {
 
   copyHVData();
 
-  if ( dumpAtEnd   ) dumpSnapshot( coralTime( procUntil ) );
+  if ( dumpAtEnd   ) dumpSnapshot( coralTime( lastFound ) );
 
   return;
 }
