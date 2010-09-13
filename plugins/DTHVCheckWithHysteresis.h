@@ -1,6 +1,6 @@
-#ifndef DTHVCheckByAbsoluteValues_H
-#define DTHVCheckByAbsoluteValues_H
-/** \class DTHVCheckByAbsoluteValues
+#ifndef DTHVCheckWithHysteresis_H
+#define DTHVCheckWithHysteresis_H
+/** \class DTHVCheckWithHysteresis
  *
  *  Description: 
  *
@@ -29,26 +29,26 @@ namespace edm{
 //---------------
 // C++ Headers --
 //---------------
-
+#include <map>
 
 //              ---------------------
 //              -- Class Interface --
 //              ---------------------
 
 namespace cond { namespace service {
-class DTHVCheckByAbsoluteValues: public DTHVAbstractCheck {
+class DTHVCheckWithHysteresis: public DTHVAbstractCheck {
 
  public:
 
   /** Constructor
    */
-  DTHVCheckByAbsoluteValues();
-  DTHVCheckByAbsoluteValues( const edm::ParameterSet & iConfig, 
+  DTHVCheckWithHysteresis();
+  DTHVCheckWithHysteresis( const edm::ParameterSet & iConfig, 
                  edm::ActivityRegistry & iAR );
 
   /** Destructor
    */
-  virtual ~DTHVCheckByAbsoluteValues();
+  virtual ~DTHVCheckWithHysteresis();
 
   /** Operations
    */
@@ -60,18 +60,28 @@ class DTHVCheckByAbsoluteValues: public DTHVAbstractCheck {
           const std::map<int,timedMeasurement>& snapshotValues,
           const std::map<int,int>& aliasMap,
           const std::map<int,int>& layerMap );
+  virtual void setStatus(
+               int rawId,
+               int flagA, int flagC, int flagS,
+               const std::map<int,timedMeasurement>& snapshotValues,
+               const std::map<int,int>& aliasMap,
+               const std::map<int,int>& layerMap );
 
  private:
 
-  float* minHV;
+  float* minHVl;
+  float* minHVh;
   float* maxHV;
   float maxCurrent;
+  std::map<int,int>* oldStatusA;
+  std::map<int,int>* oldStatusC;
+  std::map<int,int>* oldStatusS;
 
 };
 
 } }
 
-#endif // DTHVCheckByAbsoluteValues_H
+#endif // DTHVCheckWithHysteresis_H
 
 
 

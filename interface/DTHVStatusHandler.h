@@ -5,8 +5,8 @@
  *  Description: Class to copy HV status via PopCon
  *
  *
- *  $Date: 2010/01/18 18:36:10 $
- *  $Revision: 1.4 $
+ *  $Date: 2010/07/21 16:06:52 $
+ *  $Revision: 1.6 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -80,20 +80,24 @@ class DTHVStatusHandler: public popcon::PopConSourceHandler<DTHVStatus> {
 
   void copyHVData();
   DTHVStatus* offlineList();
-  void setFlags( DTHVStatus* hv, int rawId, int flag );
+  void getLayerValues( int rawId, int type,
+                       float& valueL, float& valueR,
+                       float& valueS, float& valueC );
   void setChannelFlag( DTHVStatus* hv,
                        int whe, int sta, int sec, int qua, int lay, int l_p,
-                       char cht, int err );
+                       const DTHVAbstractCheck::flag& flag );
 
   int checkStatusChange( int type, float oldValue, float newValue );
   void filterData();
 
+  static DTWireId layerId( int rawId, int l_p );
   static coral::TimeStamp coralTime( const  cond::Time_t&    time );
   static  cond::Time_t     condTime( const coral::TimeStamp& time );
   static  cond::Time_t     condTime( long long int           time );
 
   std::string dataTag;
   std::string onlineConnect;
+  std::string utilConnect;
   std::string onlineAuthentication;
   std::string bufferConnect;
   DTHVStatus* lastStatus;
@@ -126,6 +130,7 @@ class DTHVStatusHandler: public popcon::PopConSourceHandler<DTHVStatus> {
   int maxPayload;
 
   coral::ISessionProxy* omds_s_proxy;
+  coral::ISessionProxy* util_s_proxy;
   coral::ISessionProxy* buff_s_proxy;
 
   std::string mapVersion;
