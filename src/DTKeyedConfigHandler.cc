@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2010/06/01 10:34:12 $
- *  $Revision: 1.3 $
+ *  $Date: 2010/06/04 09:14:23 $
+ *  $Revision: 1.4 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -138,7 +138,8 @@ void DTKeyedConfigHandler::getNewObjects() {
   std::cout << "get run config..." << std::endl;
 
   // Find latest runs
-  std::map<int,int> runMap;
+//  std::map<int,int> runMap;
+  std::map<int,std::vector<int>*> runMap;
   std::map<int,std::vector<DTConfigKey>*> rhcMap;
   coral::ITable& runHistoryTable =
     isession->nominalSchema().tableHandle( "RUNHISTORY" );
@@ -154,14 +155,20 @@ void DTKeyedConfigHandler::getNewObjects() {
     if ( static_cast<unsigned>( runId ) <= lastRun ) continue;
     if ( runId < minRunId ) continue;
     if ( runId > maxRunId ) continue;
+    std::vector<int>* rhcPtr = 0;
+    std::map<int,std::vector<int>*>::const_iterator rhcIter;
     std::cout << "schedule config key copy for run "
               << runId << " ---> RHID " << rhcId << std::endl;
-    if ( runMap.find( runId ) == runMap.end() )
-         runMap.insert( std::pair<int,int>( runId, rhcId ) );
+    if ( ( rhcIter = runMap.find( runId ) ) == runMap.end() )
+         runMap.insert( std::pair<int,std::vector<int>*>( runId,
+                        rhcPtr = new std::vector<int> ) );
+//         runMap.insert( std::pair<int,int>( runId, rhcId ) );
+    else                rhcPtr = rhcIter->second;
+    rhcPtr->push_back( rhcId );
     if ( rhcMap.find( rhcId ) == rhcMap.end() )
          rhcMap.insert( std::pair<int,std::vector<DTConfigKey>*>(
-                                            rhcId,
-                                            new std::vector<DTConfigKey> ) );
+                        rhcId,
+                        new std::vector<DTConfigKey> ) );
 //         rhcMap.insert( std::pair<int,std::vector<DTConfigKey>*>( rhcId, 0 ) );
   }
   if ( !runMap.size() ) std::cout << "no new run found" << std::endl;
@@ -317,29 +324,46 @@ void DTKeyedConfigHandler::getNewObjects() {
   }
 
   // loop over new runs
-  std::map<int,int>::const_iterator runIter = runMap.begin();
-  std::map<int,int>::const_iterator runIend = runMap.end();
+//  std::map<int,int>::const_iterator runIter = runMap.begin();
+//  std::map<int,int>::const_iterator runIend = runMap.end();
+  std::map<int,std::vector<int>*>::const_iterator runIter = runMap.begin();
+  std::map<int,std::vector<int>*>::const_iterator runIend = runMap.end();
   while ( runIter != runIend ) {
-    const std::pair<int,int>& runEntry = *runIter++;
+    const std::pair<int,std::vector<int>*>& runEntry = *runIter++;
+//    const std::pair<int,int>& runEntry = *runIter++;
     // get full configuration
     int run = runEntry.first;
-    int rhc = runEntry.second;
-    std::map<int,std::vector<DTConfigKey>*>::const_iterator
-             rhcIter = rhcMap.find( rhc );
-    std::map<int,std::vector<DTConfigKey>*>::const_iterator
-             rhcIend = rhcMap.end();
-    if ( rhcIter == rhcIend ) continue;
-    if ( rhcIter->second == 0 ) {
-      std::cout << "RHC not found for run: " << run << std::endl;
-      continue;
+//    int rhc = runEntry.second;
+    std::vector<DTConfigKey> cfl;
+    std::vector<int>* rhcPtr = runEntry.second;
+    std::vector<int>::const_iterator rhrIter = rhcPtr->begin();
+    std::vector<int>::const_iterator rhrIend = rhcPtr->end();
+    while ( rhrIter != rhrIend ) {
+      int rhc = *rhrIter++;
+      std::cout << "retrieve configuration bricks for run " << run
+                << " ---> RH " << rhc << std::endl;
+      std::map<int,std::vector<DTConfigKey>*>::const_iterator
+               rhcIter = rhcMap.find( rhc );
+      std::map<int,std::vector<DTConfigKey>*>::const_iterator
+               rhcIend = rhcMap.end();
+      if ( rhcIter == rhcIend ) continue;
+      std::vector<DTConfigKey>* listPtr = rhcIter->second;
+      if ( listPtr == 0 ) continue;
+//    if ( rhcIter->second == 0 ) {
+//      std::cout << "RHC not found for run: " << run << std::endl;
+//      continue;
+//    }
+//    if ( rhcIter->second->size() == 0 ) 
+//      std::cout << "empty RHC for run: " << run << std::endl;
+//    std::vector<DTConfigKey>& cfl = *( rhcIter->second );
+      std::vector<DTConfigKey>::const_iterator bkiIter = listPtr->begin();
+      std::vector<DTConfigKey>::const_iterator bkiIend = listPtr->end();
+      while ( bkiIter != bkiIend ) cfl.push_back( *bkiIter++ );
     }
-    if ( rhcIter->second->size() == 0 ) 
-      std::cout << "empty RHC for run: " << run << std::endl;
-    std::vector<DTConfigKey>& cfl = *( rhcIter->second );
     if ( sameConfigList( cfl, lastKey ) ) continue;
     lastKey = cfl;
-    std::cout << "retrieve configuration bricks for run " << run
-              << " ---> RH " << rhc << std::endl;
+//    std::cout << "retrieve configuration bricks for run " << run
+//              << " ---> RH " << rhc << std::endl;
     DTCCBConfig* fullConf = new DTCCBConfig( dataTag );
     // set run and full configuration in payload
     fullConf->setStamp(   run );
@@ -391,7 +415,7 @@ void DTKeyedConfigHandler::getNewObjects() {
       while ( bkiIter != bkiIend ) {
         int brickId = *bkiIter++;
         bktIter = bktMap.find( brickId );
-	if ( bktIter == bktIend ) continue;
+        if ( bktIter == bktIend ) continue;
         if ( bktIter->second == cft ) bkList.push_back( brickId );
       }
       fullConf->appendConfigKey( chaId.wheelId,
