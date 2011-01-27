@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2010/09/13 14:20:12 $
- *  $Revision: 1.9.2.2 $
+ *  $Date: 2010/09/13 15:48:53 $
+ *  $Revision: 1.9.2.3 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -780,6 +780,17 @@ int DTHVStatusHandler::recoverSnapshot() {
 
 
 cond::Time_t DTHVStatusHandler::recoverLastTime() {
+  long long int lastTime = 0LL;
+  long long int chanTime = 0LL;
+  std::map<int,timedMeasurement>::iterator mapIter = snapshotValues.begin();
+  std::map<int,timedMeasurement>::iterator mapIend = snapshotValues.end();
+  while ( mapIter != mapIend ) {
+    const std::pair<int,timedMeasurement>& entry = *mapIter++;
+    chanTime = entry.second.first;
+    if ( lastTime < chanTime ) lastTime = chanTime;
+  }
+  return condTime( lastTime );
+/*
   coral::ITable& infoTable =
          buff_s_proxy->nominalSchema().tableHandle( "LOG" );
   std::auto_ptr<coral::IQuery> infoQuery( infoTable.newQuery() );
@@ -790,6 +801,7 @@ cond::Time_t DTHVStatusHandler::recoverLastTime() {
     time = infoCursor.currentRow()["SNAPSHOT"].data<coral::TimeStamp>();
   }
   return condTime( time );
+*/
 }
 
 
