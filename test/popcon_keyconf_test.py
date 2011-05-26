@@ -17,14 +17,14 @@ process.PoolDBOutputService = cms.Service("PoolDBOutputService",
     ),
     cms.PSet(
         record = cms.string('keyedConfBricks'),
-        tag = cms.string('keyedConfBricks_V01'),
+        tag = cms.string('DTKeyedConfigContainer_Vyy_zzz'),
         timetype = cms.untracked.string('hash'),
         withWrapper = cms.untracked.bool(True),
         outOfOrder = cms.untracked.bool(True)
     ),
     cms.PSet(
         record = cms.string('keyedConfListIOV'),
-        tag = cms.string('keyedConfListIOV_V01'),
+        tag = cms.string('DTKeyedConfigList_Vyy_zzz'),
         timetype = cms.untracked.string('runnumber'),
         withWrapper = cms.untracked.bool(True),
         outOfOrder = cms.untracked.bool(False)
@@ -44,12 +44,12 @@ process.essource = cms.ESSource("PoolDBESSource",
     DumpStat=cms.untracked.bool(True),                           
     toGet = cms.VPSet(
     cms.PSet(
-    record = cms.string('DTKeyedConfigListRcd'),
-    tag = cms.string('keyedConfListIOV_V01')
+    record = cms.string('DTKeyedConfigContainerRcd'),
+    tag = cms.string('DTKeyedConfigContainer_Vyy_zzz')
     ),
     cms.PSet(
-    record = cms.string('DTKeyedConfigContainerRcd'),
-    tag = cms.string('keyedConfBricks_V01')
+    record = cms.string('DTKeyedConfigListRcd'),
+    tag = cms.string('DTKeyedConfigList_Vyy_zzz')
     )
     )
 )

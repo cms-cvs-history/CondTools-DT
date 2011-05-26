@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2010/06/04 09:14:23 $
- *  $Revision: 1.4 $
+ *  $Date: 2010/09/29 12:31:13 $
+ *  $Revision: 1.4.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -481,6 +481,7 @@ void DTKeyedConfigHandler::chkConfigList() {
     std::map<int,bool>::const_iterator cfgIter =
                                        activeConfigMap.find( fullConfigId );
     if ( cfgIter == activeConfigMap.end() ) continue;
+    if ( !( cfgIter->second ) ) continue;
     if ( activeCCBCfgMap.find( fullCCBCfgId ) ==
          activeCCBCfgMap.end() ) 
          activeCCBCfgMap.insert( std::pair<int,bool>( fullCCBCfgId, true ) );

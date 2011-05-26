@@ -14,16 +14,15 @@ process.PoolDBESSource = cms.ESSource("PoolDBESSource",
     tag = cms.string('conf_test')
     ),
     cms.PSet(
-    record = cms.string('DTKeyedConfigListRcd'),
-    tag = cms.string('keyedConfListIOV_V01')
+    record = cms.string('DTKeyedConfigContainerRcd'),
+    tag = cms.string('DTKeyedConfigContainer_Vyy_zzz')
     ),
     cms.PSet(
-    record = cms.string('DTKeyedConfigContainerRcd'),
-    tag = cms.string('keyedConfBricks_V01')
+    record = cms.string('DTKeyedConfigListRcd'),
+    tag = cms.string('DTKeyedConfigList_Vyy_zzz')
     )
     ),
-    connect = cms.string('sqlite_file:userconf.db'),
-#    connect = cms.string('sqlite_file:testconf.db'),
+    connect = cms.string('sqlite_file:testconf.db'),
     DBParameters = cms.PSet(
         messageLevel = cms.untracked.int32(0),
         authenticationPath = cms.untracked.string('.')
