@@ -43,7 +43,9 @@ process.PoolDBOutputService = cms.Service("PoolDBOutputService",
 
 process.conf_init = cms.EDAnalyzer("DTKeyedConfigDBInit",
     container = cms.string('keyedConfBricks'),
-    iov       = cms.string('keyedConfListIOV')
+    iov       = cms.string('keyedConfListIOV'),
+    writeContainer = cms.bool(True),
+    writeIOV       = cms.bool(False)
 )
 
 process.p = cms.Path(process.conf_init)
