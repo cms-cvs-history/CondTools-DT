@@ -24,7 +24,7 @@ process.PoolDBOutputService = cms.Service("PoolDBOutputService",
     ),
     cms.PSet(
         record = cms.string('keyedConfListIOV'),
-        tag = cms.string('DTKeyedConfigList_Vyy_zzz'),
+        tag = cms.string('DTKeyedConfigList_xxx_Vyy_zzz'),
         timetype = cms.untracked.string('runnumber'),
         withWrapper = cms.untracked.bool(True),
         outOfOrder = cms.untracked.bool(False)
@@ -49,7 +49,7 @@ process.essource = cms.ESSource("PoolDBESSource",
     ),
     cms.PSet(
     record = cms.string('DTKeyedConfigListRcd'),
-    tag = cms.string('DTKeyedConfigList_Vyy_zzz')
+    tag = cms.string('DTKeyedConfigList_xxx_Vyy_zzz')
     )
     )
 )
@@ -76,11 +76,19 @@ process.conf_o2o = cms.EDAnalyzer("DTUserKeyedConfigPopConAnalyzer",
             ),
             cms.PSet(
                 configType = cms.untracked.int32(3),
-                configKey  = cms.untracked.int32(542)
+                configKey  = cms.untracked.int32(1226)
+            ),
+            cms.PSet(
+                configType = cms.untracked.int32(4),
+                configKey  = cms.untracked.int32(1226)
             ),
             cms.PSet(
                 configType = cms.untracked.int32(5),
                 configKey  = cms.untracked.int32(1226)
+            ),
+            cms.PSet(
+                configType = cms.untracked.int32(6),
+                configKey  = cms.untracked.int32(542)
             )
         ),
         onlineAuthentication = cms.string('.')

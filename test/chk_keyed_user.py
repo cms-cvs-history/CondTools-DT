@@ -19,7 +19,7 @@ process.PoolDBESSource = cms.ESSource("PoolDBESSource",
     ),
     cms.PSet(
     record = cms.string('DTKeyedConfigListRcd'),
-    tag = cms.string('DTKeyedConfigList_Vyy_zzz')
+    tag = cms.string('DTKeyedConfigList_xxx_Vyy_zzz')
     )
     ),
     connect = cms.string('sqlite_file:testconf.db'),
