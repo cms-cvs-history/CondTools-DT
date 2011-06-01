@@ -21,12 +21,12 @@ process.PoolDBOutputService = cms.Service("PoolDBOutputService",
     toPut = cms.VPSet(
     cms.PSet(
         record = cms.string('DTCCBConfigRcd'),
-        tag = cms.string('conf_test'),
+        tag = cms.string('DTCCBConfig_Vyy_zzz'),
         timetype = cms.untracked.string('runnumber')
     ),
     cms.PSet(
         record = cms.string('keyedConfBricks'),
-        tag = cms.string('DTKeyedConfigContainer_Vyy_zzz'),
+        tag = cms.string('DTKeyedConfig_Vyy_zzz'),
         timetype = cms.untracked.string('hash'),
         withWrapper = cms.untracked.bool(True),
         outOfOrder = cms.untracked.bool(True)

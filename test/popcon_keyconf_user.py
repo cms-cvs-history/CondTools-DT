@@ -12,12 +12,12 @@ process.PoolDBOutputService = cms.Service("PoolDBOutputService",
     toPut = cms.VPSet(
     cms.PSet(
         record = cms.string('DTCCBConfigRcd'),
-        tag = cms.string('conf_test'),
+        tag = cms.string('DTCCBConfig_xxx_Vyy_zzz'),
         timetype = cms.untracked.string('runnumber')
     ),
     cms.PSet(
         record = cms.string('keyedConfBricks'),
-        tag = cms.string('DTKeyedConfigContainer_xxx_Vyy_zzz'),
+        tag = cms.string('DTKeyedConfig_xxx_Vyy_zzz'),
         timetype = cms.untracked.string('hash'),
         withWrapper = cms.untracked.bool(True),
         outOfOrder = cms.untracked.bool(True)
@@ -45,7 +45,7 @@ process.essource = cms.ESSource("PoolDBESSource",
     toGet = cms.VPSet(
     cms.PSet(
     record = cms.string('DTKeyedConfigContainerRcd'),
-    tag = cms.string('DTKeyedConfigContainer_xxx_Vyy_zzz')
+    tag = cms.string('DTKeyedConfig_xxx_Vyy_zzz')
     ),
     cms.PSet(
     record = cms.string('DTKeyedConfigListRcd'),
@@ -62,8 +62,10 @@ process.conf_o2o = cms.EDAnalyzer("DTUserKeyedConfigPopConAnalyzer",
             authenticationPath = cms.untracked.string('.')
         ),
         onlineDB = cms.string('sqlite_file:dummy_online.db'),
-        tag = cms.string('conf_test'),
+        tag = cms.string('DTCCBConfig_xxx_Vyy_zzz'),
         run = cms.int32(1),
+        writeKeys = cms.bool(True),
+        writeData = cms.bool(True),
         container = cms.string('keyedConfBricks'),
         DTConfigKeys = cms.VPSet(
             cms.PSet(

@@ -12,12 +12,12 @@ process.PoolDBOutputService = cms.Service("PoolDBOutputService",
     toPut = cms.VPSet(
     cms.PSet(
         record = cms.string('DTCCBConfigRcd'),
-        tag = cms.string('conf_test'),
+        tag = cms.string('DTCCBConfig_Vyy_zzz'),
         timetype = cms.untracked.string('runnumber')
     ),
     cms.PSet(
         record = cms.string('keyedConfBricks'),
-        tag = cms.string('DTKeyedConfigContainer_Vyy_zzz'),
+        tag = cms.string('DTKeyedConfig_Vyy_zzz'),
         timetype = cms.untracked.string('hash'),
         withWrapper = cms.untracked.bool(True),
         outOfOrder = cms.untracked.bool(True)
@@ -45,7 +45,7 @@ process.essource = cms.ESSource("PoolDBESSource",
     toGet = cms.VPSet(
     cms.PSet(
     record = cms.string('DTKeyedConfigContainerRcd'),
-    tag = cms.string('DTKeyedConfigContainer_Vyy_zzz')
+    tag = cms.string('DTKeyedConfig_Vyy_zzz')
     ),
     cms.PSet(
     record = cms.string('DTKeyedConfigListRcd'),
@@ -66,7 +66,7 @@ process.conf_o2o = cms.EDAnalyzer("DTKeyedConfigPopConAnalyzer",
         maxBrick = cms.untracked.int32(40),
         minRun = cms.untracked.int32(99),
         maxRun = cms.untracked.int32(50000),
-        tag = cms.string('conf_test'),
+        tag = cms.string('DTCCBConfig_Vyy_zzz'),
         container = cms.string('keyedConfBricks'),
         onlineAuthentication = cms.string('.')
     ),
